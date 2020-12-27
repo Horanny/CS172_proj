@@ -22,15 +22,14 @@ class Net(nn.Module):
             self.PSPLayers = nn.ModuleList()  # [] # Layers for decoder
             for Ps in self.PSPScales:
                 self.PSPLayers.append(nn.Sequential(
-                    nn.Conv2d(2048, 1024, stride=1, kernel_size=3, padding=1, bias=True)))
+                    nn.Conv2d(2048, 1024, stride=1, kernel_size=3, padding=1, bias=True))) 
             self.PSPSqueeze = nn.Sequential(
                 nn.Conv2d(4096, 512, stride=1, kernel_size=1, padding=0, bias=False),
                 nn.BatchNorm2d(512),
                 nn.ReLU(),
                 nn.Conv2d(512, 512, stride=1, kernel_size=3, padding=0, bias=False),
                 nn.BatchNorm2d(512),
-                nn.ReLU()
-            )
+                nn.ReLU())
             # ------------------Skip conncetion layers for upsampling-----------------------------------------------------------------------------
             self.SkipConnections = nn.ModuleList()
             self.SkipConnections.append(nn.Sequential(
@@ -65,8 +64,7 @@ class Net(nn.Module):
             self.OutLayersList =nn.ModuleList()
             self.OutLayersDict={}
             
-            for f,nm in enumerate(CatDict):
-
+            for (f,nm) in enumerate(CatDict):
                     self.OutLayersDict[nm]= nn.Conv2d(256, 2, stride=1, kernel_size=3, padding=1, bias=False)
                     self.OutLayersList.append(self.OutLayersDict[nm])
 
@@ -82,7 +80,8 @@ class Net(nn.Module):
                     self.half()
                     tp=torch.HalfTensor
                 InpImages = torch.autograd.Variable(torch.from_numpy(Images.astype(float)), requires_grad=False).transpose(2,3).transpose(1, 2).type(tp)
-                if FreezeBatchNormStatistics: self.eval()
+                if FreezeBatchNormStatistics: 
+                    self.eval()
 #---------------Convert to cuda gpu or CPU -------------------------------------------------------------------------------------------------------------------
                 if UseGPU:
                     InpImages=InpImages.cuda()
@@ -116,14 +115,13 @@ class Net(nn.Module):
                 PSPFeatures=[] # Results of various of scaled procceessing
                 for i,PSPLayer in enumerate(self.PSPLayers): # run PSP layers scale features map to various of sizes apply convolution and concat the results
                       NewSize=(np.array(PSPSize)*self.PSPScales[i]).astype(np.int)
-                      if NewSize[0] < 1: NewSize[0] = 1
-                      if NewSize[1] < 1: NewSize[1] = 1
-
+                      if NewSize[0] < 1: 
+                          NewSize[0] = 1
+                      if NewSize[1] < 1: 
+                          NewSize[1] = 1
                       y = nn.functional.interpolate(x, tuple(NewSize), mode='bilinear')
                       y = PSPLayer(y)
                       y = nn.functional.interpolate(y, PSPSize, mode='bilinear')
-
-                #      if np.min(PSPSize*self.ScaleRates[i])<0.4: y*=0
                       PSPFeatures.append(y)
                 x=torch.cat(PSPFeatures,dim=1)
                 x=self.PSPSqueeze(x)
