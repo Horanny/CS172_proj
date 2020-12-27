@@ -25,7 +25,7 @@ category['Filled']=-1
 
 InputDir="/home/yyin/CV/proj/InputImages" 
 OutDir="OutputImages\\" 
-Trained_model_path ="/home/yyin/CV/proj/TrainedModelWeiht1m_steps_Semantic_TrainedWithLabPicsAndCOCO_AllSets.torch"
+Trained_model_path ="/home/yyin/CV/proj/TrainedModel.torch"
 
 UseGPU=False 
 FreezeBatchNormStatistics = False 
